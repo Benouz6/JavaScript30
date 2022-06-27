@@ -1,11 +1,13 @@
 /* Get the elements */
 const player = document.querySelector('.player');
 const video = player.querySelector('.viewer');
-const progress = player.querySelector('.progress')
-const progressBar = player.querySelector('.progress__filled')
+const progress = player.querySelector('.progress');
+const progressBar = player.querySelector('.progress__filled');
 const toggle = player.querySelector('.toggle');
 const skipButtons = player.querySelectorAll('[data-skip]');
 const ranges = player.querySelectorAll('.player__slider');
+const fullScreen = player.querySelector('#full')
+let mouseDown = false;
 
 /* Build the functions */
 
@@ -18,19 +20,30 @@ function togglePlay() {
 /* Update the play button */
 function updateBtn() {
   const icon = this.paused ? '►' : '❚ ❚';
-  toggle.innerHTML = icon
+  toggle.innerHTML = icon;
 }
 
 function skip () {
-  if (this.dataset.skip === '-10') {
-    video.currentTime = (video.currentTime - 10)
-  }
-  if (this.dataset.skip === '25') {
-    video.currentTime = (video.currentTime + 25)
-  }
-  /* console.log(this.dataset);
-  console.log(minusTen); */
+  video.currentTime += parseFloat(this.dataset.skip);
+}
+
+function change () {
+ video[this.name] = this.value
  }
+
+function handleProgress() {
+  const watchPoint = (video.currentTime / video.duration) * 100;
+  progressBar.style.flexBasis = `${watchPoint}%`;
+}
+
+function updateProgress(e) {
+  const scrubTime = e.offsetX / progress.offsetWidth * video.duration;
+  video.currentTime = scrubTime
+}
+
+function changeScreenSize() {
+  video.requestFullscreen()
+}
 
 /* Event listener */
 video.addEventListener('click', togglePlay)
@@ -40,3 +53,17 @@ toggle.addEventListener('click', togglePlay)
 skipButtons.forEach( btn => {
   btn.addEventListener('click', skip)
 })
+
+ranges.forEach( range => {
+  range.addEventListener('change', change)
+})
+ranges.forEach( range => {
+  range.addEventListener('mousemove', change)
+})
+video.addEventListener('timeupdate', handleProgress)
+
+progress.addEventListener('click', updateProgress)
+progress.addEventListener('mousemove', (e) => mouseDown && updateProgress(e))
+progress.addEventListener('mousedown', () => mouseDown = true)
+progress.addEventListener('mouseup', () => mouseDown = false)
+fullScreen.addEventListener('click', changeScreenSize)

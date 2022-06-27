@@ -160,3 +160,9 @@ input[type=range]::-moz-range-thumb {
   background: #ffc600;
   cursor: pointer;
 }
+
+/* Full screen style */
+
+#full {
+  
+}
