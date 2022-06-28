@@ -71,9 +71,16 @@
         // Bottom of the image
         const imageBottom = image.offsetTop + image.height;
 
+        // Check if the image is half shown, store it
+        const isHalfShown = slideInAt > image.offsetTop;
+
+        const isNotScrolledPast = window.scrollY < imageBottom;
         // If the image half shown?
-        if (slideInAt > image.offsetTop) {
-          console.log('hello');
+        if (isHalfShown && isNotScrolledPast) {
+          image.classList.add('active');
+        } else {
+          image.classList.remove('active');
+
         }
       })
     }
