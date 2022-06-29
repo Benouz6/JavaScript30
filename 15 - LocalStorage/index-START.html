@@ -28,17 +28,29 @@
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  const items = JSON.parse(localStorage.getItem('items')) || [];
 
+  // Function to add an item
   function addItem(e) {
+
+    // Prevent the re actualisation of the page when the form is submit
     e.preventDefault();
     const text = this.querySelector('[name=item]').value;
     const item = {
       text,
       done: false
     };
-    items.push(item)
-    populateList(items, itemsList)
+
+    // Store the item in the items array
+    items.push(item);
+
+    // Render the items by calling the function
+    populateList(items, itemsList);
+
+    // Store it in the local storage
+    localStorage.setItem('items', JSON.stringify(items));
+
+    // Empty the form
     this.reset();
   }
 
@@ -46,15 +58,34 @@
     platesList.innerHTML = plates.map((plate, i) => {
       return `
       <li>
-        <input type='checkbox' data-index=${i} id='item${i}'>
-        ${plate.text}
+        <input type='checkbox' data-index=${i} id='item${i}' ${plate.done ? 'checked' : '' }>
+        <label for='item${i}'>${plate.text}</label>
       </li >
       `
     }).join('');
    }
 
-  // Listen for the submit button
-  addItems.addEventListener('submit', addItem)
+   function toggleDone(e) {
+    if (!e.target.matches('input')) return; // Skip this unless it's an input
+    const index = e.target.dataset['index'];
+    const itemToToggle = (items[index]);
+
+    // Set to false if true or opposite
+    itemToToggle.done = !itemToToggle.done;
+
+    // Store it in the local storage
+    localStorage.setItem('items', JSON.stringify(items));
+
+    // Render in the page by calling the function
+    populateList(items, itemsList);
+    console.log(itemToToggle);
+  }
+
+    // Listen for the submit button
+    addItems.addEventListener('submit', addItem);
+    itemsList.addEventListener('click', toggleDone);
+
+  populateList(items, itemsList);
 </script>
 
 
