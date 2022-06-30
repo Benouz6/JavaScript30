@@ -23,13 +23,18 @@
       <input type="text" name="item" placeholder="Item Name" required>
       <input type="submit" value="+ Add Item">
     </form>
+    <div class="buttons">
+      <a href="#"></a><button data-action="delete" class="btn">Delete all</button></a>
+      <a href="#"></a><button data-action="check-all" class="btn">Check-all</button></a>
+      <a href="#"></a><button data-action="uncheck-all"class="btn">Uncheck-all</button></a>
+    </div>
   </div>
 
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
   const items = JSON.parse(localStorage.getItem('items')) || [];
-
+  const btns = document.querySelectorAll('.btn')
   // Function to add an item
   function addItem(e) {
 
@@ -81,9 +86,37 @@
     console.log(itemToToggle);
   }
 
-    // Listen for the submit button
-    addItems.addEventListener('submit', addItem);
-    itemsList.addEventListener('click', toggleDone);
+  function btnsAction(e) {
+    if (e.target.dataset['action'] === 'uncheck-all') {
+      items.forEach(item => {
+        item.done = false
+      });
+      console.log(items);
+    }
+    if (e.target.dataset['action'] === 'check-all') {
+      items.forEach(item => {
+        item.done = true
+      });
+      console.log(items);
+    }
+    if (e.target.dataset['action'] === 'delete') {
+      localStorage.clear();
+      console.log('tu passes par la?');
+    }
+    console.log(items);
+    // Store it in the local storage
+    localStorage.setItem('items', JSON.stringify(items));
+    // Render in the page by calling the function
+    populateList(items, itemsList);
+  }
+
+  // Listen for the submit button
+  addItems.addEventListener('submit', addItem);
+  itemsList.addEventListener('click', toggleDone);
+  btns.forEach(btn => {
+    btn.addEventListener('click', btnsAction)
+  });
+  // toUncheck.addEventListener('click', checkAll);
 
   populateList(items, itemsList);
 </script>
